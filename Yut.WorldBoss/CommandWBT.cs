@@ -30,6 +30,11 @@ namespace Yut.WorldBoss
                 return;
             }
             UnturnedPlayer player = caller as UnturnedPlayer;
+            if (!PlayerManager.Instance.HasSign(player))
+            {
+                UnturnedChat.Say(caller, Yut.Instance.Translate("Not_Sign"));
+                return;
+            }
             player.Teleport(Yut.Instance.Configuration.Instance.BossRefreshPoint + new UnityEngine.Vector3(30, 0, 0), 0);
         }
     }

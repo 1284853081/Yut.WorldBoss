@@ -43,6 +43,7 @@ namespace Yut.WorldBoss
                 list.Add("Set_Time", "Successfully set refresh time to {0}:{1}");
                 list.Add("Invalid_Parameter", "Invalid parameter");
                 list.Add("Challenge_Ends", "The world boss has ended");
+                list.Add("Not_Sign", "Unable to use this command without registering to participate in the World BOSS");
                 return list;
             }
         }

@@ -39,6 +39,8 @@ namespace Yut.WorldBoss
             }
             return false;
         }
+        public bool HasSign(UnturnedPlayer player)
+            => damages.ContainsKey(player.CSteamID);
         public void AddDamage(CSteamID id,uint damage)
         {
             if (damages.ContainsKey(id))

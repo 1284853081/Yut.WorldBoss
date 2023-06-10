@@ -67,7 +67,7 @@
       <HintPath>..\..\..\..\Yut.DataModule\Yut.DataModule\bin\Release\Yut.DataModule.dll</HintPath>
     </Reference>
     <Reference Include="Yut.ZombieModule">
-      <HintPath>..\Yut.ZombieModule\bin\Debug\Yut.ZombieModule.dll</HintPath>
+      <HintPath>..\..\Yut.ZombieModule\bin\Release\Yut.ZombieModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

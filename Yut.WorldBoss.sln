@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yut.WorldBoss", "Yut.WorldBoss\Yut.WorldBoss.csproj", "{BA8AF1D7-4F15-43ED-B1B7-AC2DBAD868A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yut.ZombieModule", "Yut.ZombieModule\Yut.ZombieModule.csproj", "{65CB8B6B-F165-4F03-877E-77718E8FE796}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{BA8AF1D7-4F15-43ED-B1B7-AC2DBAD868A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA8AF1D7-4F15-43ED-B1B7-AC2DBAD868A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA8AF1D7-4F15-43ED-B1B7-AC2DBAD868A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65CB8B6B-F165-4F03-877E-77718E8FE796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65CB8B6B-F165-4F03-877E-77718E8FE796}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65CB8B6B-F165-4F03-877E-77718E8FE796}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65CB8B6B-F165-4F03-877E-77718E8FE796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
