@@ -66,9 +66,6 @@
     <Reference Include="Yut.DataModule">
       <HintPath>..\..\..\..\Yut.DataModule\Yut.DataModule\bin\Release\Yut.DataModule.dll</HintPath>
     </Reference>
-    <Reference Include="Yut.ZombieModule">
-      <HintPath>..\..\Yut.ZombieModule\bin\Release\Yut.ZombieModule.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BossManager.cs" />
@@ -79,12 +76,14 @@
     <Compile Include="CommandWBTI.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ItemPair.cs" />
+    <Compile Include="Minion.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="RewardInterval.cs" />
     <Compile Include="Yut.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZombieManager.cs" />
-    <Compile Include="ZombieTableEx.cs" />
+    <Compile Include="ZombieRegion.cs" />
+    <Compile Include="ZombieType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

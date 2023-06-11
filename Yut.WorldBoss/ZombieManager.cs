@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using Yut.ZombieModule;
 using Yut.DataModule;
 using Rocket.Unturned.Player;
 
@@ -76,31 +75,41 @@ namespace Yut.WorldBoss
         {
             LevelNavigation.tryGetBounds(Yut.Instance.Configuration.Instance.BossRefreshPoint, out bound);
             Zombie boss = SDG.Unturned.ZombieManager.regions[bound].zombies[0];
-            byte type = (byte)(Yut.Instance.TableInd == -1 ? 0 : Yut.Instance.TableInd);
-            ZombieType.CheckValid(Yut.Instance.Configuration.Instance.regions[0].BossType, out byte speciality);
-            SDG.Unturned.ZombieManager.sendZombieAlive(boss, type, speciality, 0, 0, 0, 0,
+            byte type = DataModule.Math.RangeToByte(Yut.Instance.BossTable);
+            byte suit = RandomSuit(LevelZombies.tables[type]);
+            ZombieType.CheckValid(Yut.Instance.Configuration.Instance.Region.BossType, out byte speciality);
+            SDG.Unturned.ZombieManager.sendZombieAlive(boss, type, speciality, suit, suit, suit, suit,
                 Yut.Instance.Configuration.Instance.BossRefreshPoint, (byte)UnityEngine.Random.Range(0, 180));
-            states.Add(new ZombieState(0, Yut.Instance.Configuration.Instance.regions[0].BossHealth));
+            states.Add(new ZombieState(0, Yut.Instance.Configuration.Instance.Region.BossHealth));
+        }
+        private byte RandomSuit(ZombieTable table)
+        {
+            int min = int.MaxValue;
+            for (int i = 0; i < 4; i++)
+                min = System.Math.Min(min, table.slots[i].table.Count);
+            return DataModule.Math.RangeToByte(UnityEngine.Random.Range(0, min));
         }
         private void SpawnMinions()
         {
-            var region = Yut.Instance.Configuration.Instance.regions[0];
+            var region = Yut.Instance.Configuration.Instance.Region;
             byte minions = region.MaxMinions;
             for (byte i = 1; i <= minions; i++)
                 SpawnMinion(i);
         }
         public void SpawnMinion(ushort id)
         {
-            var region = Yut.Instance.Configuration.Instance.regions[0];
-            byte type = (byte)(Yut.Instance.TableInd == -1 ? 0 : Yut.Instance.TableInd);
+            if (id >= SDG.Unturned.ZombieManager.regions[bound].zombies.Count)
+                return;
+            var region = Yut.Instance.Configuration.Instance.Region;
+            byte type = DataModule.Math.RangeToByte(Yut.Instance.MinionTable);
             var specialityStr = region.Minions[UnityEngine.Random.Range(0, region.Minions.Count)].type;
             ZombieType.CheckValid(specialityStr, out byte speciality);
-            byte suitInd = (byte)(UnityEngine.Random.Range(0, region.MinionCloths.Count) + 1);
+            byte suit = RandomSuit(LevelZombies.tables[type]);
             List<ZombieSpawnpoint> spawnpoints = LevelZombies.zombies[bound];
             Vector3 point = spawnpoints[UnityEngine.Random.Range(0, spawnpoints.Count)].point + new Vector3(0,1,0);
-            uint health = Yut.Instance.Configuration.Instance.regions[0].Minions.Find(x => x.type == specialityStr).Health;
+            uint health = Yut.Instance.Configuration.Instance.Region.Minions.Find(x => x.type == specialityStr).Health;
             SDG.Unturned.ZombieManager.sendZombieAlive(SDG.Unturned.ZombieManager.regions[bound].zombies[id],
-                type, speciality, suitInd, suitInd, suitInd, suitInd, point, (byte)UnityEngine.Random.Range(0, 180));
+                type, speciality, suit, suit, suit, suit, point, (byte)UnityEngine.Random.Range(0, 180));
             states.Add(new ZombieState(id, health));
         }
         public void Clear()
@@ -125,7 +134,7 @@ namespace Yut.WorldBoss
             {
                 if (BossManager.Instance.IsStart)
                 {
-                    for (int i = Yut.Instance.Configuration.Instance.regions[0].MaxMinions + 1; i < SDG.Unturned.ZombieManager.regions[bound].zombies.Count; i++)
+                    for (int i = Yut.Instance.Configuration.Instance.Region.MaxMinions + 1; i < SDG.Unturned.ZombieManager.regions[bound].zombies.Count; i++)
                     {
                         Zombie zombie = SDG.Unturned.ZombieManager.regions[bound].zombies[i];
                         if (!zombie.isDead)

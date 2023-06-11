@@ -18,8 +18,11 @@ namespace Yut.WorldBoss
     public class Yut : RocketPlugin<Config>
     {
         private static Yut instance;
-        private int tableInd = -1;
+        private int bossTable;
+        private int minionTable;
         public static Yut Instance => instance;
+        public int BossTable => bossTable;
+        public int MinionTable => minionTable;
         public override TranslationList DefaultTranslations
         {
             get
@@ -47,7 +50,6 @@ namespace Yut.WorldBoss
                 return list;
             }
         }
-        public int TableInd => tableInd;
         protected override void Load()
         {
             instance = this;
@@ -84,28 +86,12 @@ namespace Yut.WorldBoss
         }
         public void LoadCloth()
         {
-            ZombieTable table = LevelZombies.tables.Find(x => x.name == "WorldBoss");
-            UnturnedChat.Say($"worldboss table:{table is null}");
-            if(table != null)
-            {
-                for(int i = 0;i< 4;i++)
-                    table.slots[i].table.Clear();
-                tableInd = LevelZombies.tables.IndexOf(table);
-                table.AddSuit(Configuration.Instance.regions[0].BossCloth);
-                for (int i = 0; i < Configuration.Instance.regions[0].MinionCloths.Count; i++)
-                    table.AddSuit(Configuration.Instance.regions[0].MinionCloths[i]);
-                return;
-            }
-            else
-            {
-                tableInd = LevelZombies.tables.Count;
-                ZombieTable newTable = new ZombieTable("WorldBoss");
-                newTable.AddSuit(Configuration.Instance.regions[0].BossCloth);
-                for (int i = 0; i < Configuration.Instance.regions[0].MinionCloths.Count; i++)
-                    newTable.AddSuit(Configuration.Instance.regions[0].MinionCloths[i]);
-                LevelZombies.tables.Add(newTable);
-            }
-            UnturnedChat.Say($"table ind = {tableInd}");
+            bossTable = LevelZombies.tables.FindIndex(x => x.name == Configuration.Instance.Region.BossTable);
+            minionTable = LevelZombies.tables.FindIndex(x => x.name == Configuration.Instance.Region.MinionTable);
+            if (bossTable < 0)
+                bossTable = UnityEngine.Random.Range(0, LevelZombies.tables.Count);
+            if(minionTable < 0)
+                minionTable = UnityEngine.Random.Range(0, LevelZombies.tables.Count);
         }
         private void DamageTool_damageZombieRequested(ref DamageZombieParameters parameters, ref bool shouldAllow)
         {
@@ -115,7 +101,7 @@ namespace Yut.WorldBoss
                 return;
             if (parameters.zombie.bound != ZombieManager.Instance.Bound)
                 return;
-            if (parameters.zombie.id > Configuration.Instance.regions[0].MaxMinions)
+            if (parameters.zombie.id > Configuration.Instance.Region.MaxMinions)
                 return;
             float times = parameters.times;
             if (parameters.applyGlobalArmorMultiplier)
@@ -142,12 +128,12 @@ namespace Yut.WorldBoss
                         BossManager.Instance.EndFight();
                         return;
                     }    
-                    else if (zombie.id < Configuration.Instance.regions[0].MaxMinions && BossManager.Instance.State < EState.Rewarding)
+                    else if (zombie.id < Configuration.Instance.Region.MaxMinions && BossManager.Instance.State < EState.Rewarding)
                         ZombieManager.Instance.SpawnMinion(zombie.id);
                 }
                 else
                 {
-                    if (zombie.id > Configuration.Instance.regions[0].MaxMinions)
+                    if (zombie.id > Configuration.Instance.Region.MaxMinions)
                         SDG.Unturned.ZombieManager.sendZombieDead(zombie, zombie.transform.position);
                 }
             }

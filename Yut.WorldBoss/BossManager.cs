@@ -44,6 +44,7 @@ namespace Yut.WorldBoss
             state = EState.Rewarding;
             stateSeconds = Yut.Instance.Configuration.Instance.RewardSeconds;
             PlayerManager.Instance.UpdatePlayerStusUI();
+            ZombieManager.Instance.KillAll();
             if (success)
                 PlayerManager.Instance.Reward();
             else
@@ -54,10 +55,9 @@ namespace Yut.WorldBoss
             state = EState.WaitingStart;
             isStart = false;
             success = true;
-            PlayerManager.Instance.Clear();
-            ZombieManager.Instance.KillAll();
-            ZombieManager.Instance.Clear();
             PlayerManager.Instance.CloseUI();
+            PlayerManager.Instance.Clear();
+            ZombieManager.Instance.Clear();
             GetNextRefreshTime();
             UnturnedChat.Say(Yut.Instance.Translate("Challenge_Ends"));
         }
@@ -78,6 +78,7 @@ namespace Yut.WorldBoss
                 isStart = true;
                 stateSeconds = Yut.Instance.Configuration.Instance.PrepareSeconds;
                 Yut.Instance.LoadCloth();
+                PlayerManager.Instance.Clear();
                 UnturnedChat.Say(Yut.Instance.Translate("Boss_Start", stateSeconds));
             }
             else
@@ -88,7 +89,7 @@ namespace Yut.WorldBoss
                     if(state == EState.Preparing)
                     {
                         int a = DataModule.Math.RangeToInt32(frame);
-                        if ((a % 5 == 0 || stateSeconds - a <= 3) && a != lastFrame)
+                        if ((a % Yut.Instance.Configuration.Instance.PrepareNoticeSeconds == 0 || stateSeconds - a <= 3) && a != lastFrame)
                         {
                             UnturnedChat.Say(Yut.Instance.Translate("Boss_Start", stateSeconds - a));
                             lastFrame = a;

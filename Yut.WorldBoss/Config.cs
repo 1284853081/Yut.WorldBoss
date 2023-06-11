@@ -5,39 +5,46 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using Yut.ZombieModule;
 
 namespace Yut.WorldBoss
 {
-    public class Config : ZombieConfig,  IRocketPluginConfiguration
+    public class Config :  IRocketPluginConfiguration
     {
         public byte RefreshHour;
         public byte RefreshMinute;
+        public ushort UIKey;
+        public string BossIcon;
+        public string BossName;
         public ItemPair Ticket;
-        public Vector3 BossRefreshPoint;
         public ushort PrepareSeconds;
         public ushort FightingSeconds;
         public ushort RewardSeconds;
         public uint MinRewardDamage;
+        public float LeaderboardRefreshSeconds;
+        public byte PrepareNoticeSeconds;
+        public ZombieRegion Region;
         public List<RewardInterval> Rewards;
+        public Vector3 BossRefreshPoint;
         public void LoadDefaults()
         {
-            ZombieCloth cloth = new ZombieCloth(0,0,0,0);
-            List<Minion> minions = new List<Minion>()
-            {
-                new Minion("NORMAL", 100)
-            };
-            List<ZombieCloth> cloths = new List<ZombieCloth>()
-            {
-                new ZombieCloth(0,0,0,0)
-            };
             RefreshHour = 0;
             RefreshMinute = 0;
-            Ticket = new ItemPair(0, 1);
-            regions = new List<ZombieRegion>()
+            UIKey = 40010;
+            BossIcon = "Your boss icon URL";
+            BossName = "世界BOSS";
+            Ticket = new ItemPair(14, 1);
+            PrepareSeconds = 30;
+            FightingSeconds = 1800;
+            RewardSeconds = 60;
+            MinRewardDamage = 100;
+            LeaderboardRefreshSeconds = 1f;
+            PrepareNoticeSeconds = 10;
+            List<Minion> minions = new List<Minion>()
             {
-                new ZombieRegion("TestRegion","BOSS_FIRE",1000000,cloth,5,minions,cloths)
+                new Minion("NORMAL", 100),
+                new Minion("SPRINTER", 50)
             };
+            Region = new ZombieRegion("BOSS_WIND",10000,5,minions,"BOSS","Minion");
             Rewards = new List<RewardInterval>()
             {
                 new RewardInterval(1,1,new List<ItemPair>(){ new ItemPair(14,1)}),
@@ -47,7 +54,6 @@ namespace Yut.WorldBoss
                 new RewardInterval(11,100,new List<ItemPair>(){ new ItemPair(14,1)}),
             };
             BossRefreshPoint = Vector3.zero;
-            MinRewardDamage = 100000;
         }
     }
 }

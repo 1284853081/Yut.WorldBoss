@@ -1,5 +1,6 @@
 ﻿using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
+using SDG.NetTransport;
 using SDG.Unturned;
 using Steamworks;
 using System;
@@ -48,7 +49,7 @@ namespace Yut.WorldBoss
         }
         internal List<DamageStus> GetPlayerStus(CSteamID id)
         {
-            List<KeyValuePair<CSteamID, uint>> list = damages.OrderBy(x => x.Value).ToList();
+            List<KeyValuePair<CSteamID, uint>> list = damages.OrderByDescending(x => x.Value).ToList();
             List<DamageStus> stus = new List<DamageStus>();
             int ind = -1;
             for(int i = 0; i < list.Count; i++)
@@ -69,37 +70,64 @@ namespace Yut.WorldBoss
         }
         public void OpenUI(CSteamID id)
         {
-
+            ushort uikey = Yut.Instance.Configuration.Instance.UIKey;
+            UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
+            if (player == null)
+                return;
+            ITransportConnection con = player.Player.channel.GetOwnerTransportConnection();
+            uint max = Yut.Instance.Configuration.Instance.Region.BossHealth;
+            EffectManager.sendUIEffect(uikey, (short)uikey, con, true);
+            EffectManager.sendUIEffectImageURL((short)uikey, con, true, "头像", Yut.Instance.Configuration.Instance.BossIcon);
+            EffectManager.sendUIEffectText((short)uikey,con,true,"Boss名字",Yut.Instance.Configuration.Instance.BossName);
+            EffectManager.sendUIEffectText((short)uikey, con, true, "血量", $"{max}/{max}");
         }
         public void CloseUI()
         {
-
+            foreach(var id in damages.Keys)
+            {
+                UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
+                if (player == null)
+                    return;
+                ITransportConnection con = player.Player.channel.GetOwnerTransportConnection();
+                EffectManager.askEffectClearByID(Yut.Instance.Configuration.Instance.UIKey, con);
+            }
         }
         public void UpdatePlayerStusUI()
         {
+            short key = (short)Yut.Instance.Configuration.Instance.UIKey;
             foreach (var kvp in damages)
             {
                 List<DamageStus> stus = GetPlayerStus(kvp.Key);
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(kvp.Key);
                 if (player == null)
                     continue;
+                ITransportConnection con = player.Player.channel.GetOwnerTransportConnection();
                 for (int i = 0; i < stus.Count; i++)
                 {
                     UnturnedPlayer player1 = UnturnedPlayer.FromCSteamID(stus[i].SteamID);
                     if (player1 == null)
                         continue;
-                    UnturnedChat.Say(player, $"排名:{stus[i].Rank},名字:{player1.DisplayName},伤害:{stus[i].Damage}");
+                    EffectManager.sendUIEffectText(key, con, true, $"排名{i}", stus[i].Rank.ToString());
+                    EffectManager.sendUIEffectText(key, con, true, $"名字{i}", player1.DisplayName);
+                    EffectManager.sendUIEffectText(key, con, true, $"分数{i}", stus[i].Damage.ToString());
+                    //UnturnedChat.Say(player, $"排名:{stus[i].Rank},名字:{player1.DisplayName},伤害:{stus[i].Damage}");
                 }
             }
         }
         public void UpdateBossHealthUI(uint bossHealth)
         {
-            foreach(var csteamid in damages.Keys)
+            short key = (short)Yut.Instance.Configuration.Instance.UIKey;
+            uint max = Yut.Instance.Configuration.Instance.Region.BossHealth;
+            ushort num = DataModule.Math.RangeToUInt16(706f * bossHealth / max);
+            string str = GetHealthBarStr(num);
+            foreach (var csteamid in damages.Keys)
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(csteamid);
                 if(player == null)
                     continue;
-                UnturnedChat.Say(player, $"Boss剩余血量{bossHealth}");
+                EffectManager.sendUIEffectText(key, player.Player.channel.GetOwnerTransportConnection(), true, "血条数值", str);
+                EffectManager.sendUIEffectText(key, player.Player.channel.GetOwnerTransportConnection(), true, "血量", $"{bossHealth}/{max}");
+                //UnturnedChat.Say(player, $"Boss剩余血量{bossHealth}");
             }
         }
         public void Reward()
@@ -150,11 +178,19 @@ namespace Yut.WorldBoss
             if(BossManager.Instance.State == EState.Fighting)
             {
                 frame += Time.deltaTime;
-                if (frame < 10f)
+                if (frame < Yut.Instance.Configuration.Instance.LeaderboardRefreshSeconds)
                     return;
                 frame = 0;
                 UpdatePlayerStusUI();
             }
+        }
+        private string GetHealthBarStr(ushort num)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" ");
+            for(int i = 0; i < num; i++)
+                sb.Append(" ");
+            return sb.ToString();
         }
     }
 }
