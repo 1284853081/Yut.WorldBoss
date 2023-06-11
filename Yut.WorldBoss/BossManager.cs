@@ -89,7 +89,7 @@ namespace Yut.WorldBoss
                     if(state == EState.Preparing)
                     {
                         int a = DataModule.Math.RangeToInt32(frame);
-                        if ((a % Yut.Instance.Configuration.Instance.PrepareNoticeSeconds == 0 || stateSeconds - a <= 3) && a != lastFrame)
+                        if ((a % DataModule.Math.RangeToByte(Yut.Instance.Configuration.Instance.PrepareNoticeSeconds,1) == 0 || stateSeconds - a <= 3) && a != lastFrame)
                         {
                             UnturnedChat.Say(Yut.Instance.Translate("Boss_Start", stateSeconds - a));
                             lastFrame = a;

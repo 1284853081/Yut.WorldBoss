@@ -74,7 +74,9 @@ namespace Yut.WorldBoss
             UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
             if (player == null)
                 return;
-            ITransportConnection con = player.Player.channel.GetOwnerTransportConnection();
+            ITransportConnection con = Provider.findTransportConnection(id);
+            if (con == null)
+                return;
             uint max = Yut.Instance.Configuration.Instance.Region.BossHealth;
             EffectManager.sendUIEffect(uikey, (short)uikey, con, true);
             EffectManager.sendUIEffectImageURL((short)uikey, con, true, "头像", Yut.Instance.Configuration.Instance.BossIcon);
@@ -87,9 +89,12 @@ namespace Yut.WorldBoss
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
                 if (player == null)
-                    return;
-                ITransportConnection con = player.Player.channel.GetOwnerTransportConnection();
+                    continue;
+                ITransportConnection con = Provider.findTransportConnection(id);
+                if (con == null)
+                    continue;
                 EffectManager.askEffectClearByID(Yut.Instance.Configuration.Instance.UIKey, con);
+                UnturnedChat.Say("3");
             }
         }
         public void UpdatePlayerStusUI()
@@ -101,7 +106,9 @@ namespace Yut.WorldBoss
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(kvp.Key);
                 if (player == null)
                     continue;
-                ITransportConnection con = player.Player.channel.GetOwnerTransportConnection();
+                ITransportConnection con = Provider.findTransportConnection(kvp.Key);
+                if (con == null)
+                    continue;
                 for (int i = 0; i < stus.Count; i++)
                 {
                     UnturnedPlayer player1 = UnturnedPlayer.FromCSteamID(stus[i].SteamID);
@@ -125,8 +132,11 @@ namespace Yut.WorldBoss
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(csteamid);
                 if(player == null)
                     continue;
-                EffectManager.sendUIEffectText(key, player.Player.channel.GetOwnerTransportConnection(), true, "血条数值", str);
-                EffectManager.sendUIEffectText(key, player.Player.channel.GetOwnerTransportConnection(), true, "血量", $"{bossHealth}/{max}");
+                ITransportConnection con = Provider.findTransportConnection(csteamid);
+                if (con == null)
+                    continue;
+                EffectManager.sendUIEffectText(key, con, true, "血条数值", str);
+                EffectManager.sendUIEffectText(key, con, true, "血量", $"{bossHealth}/{max}");
                 //UnturnedChat.Say(player, $"Boss剩余血量{bossHealth}");
             }
         }
@@ -178,7 +188,7 @@ namespace Yut.WorldBoss
             if(BossManager.Instance.State == EState.Fighting)
             {
                 frame += Time.deltaTime;
-                if (frame < Yut.Instance.Configuration.Instance.LeaderboardRefreshSeconds)
+                if (frame < DataModule.Math.Range(Yut.Instance.Configuration.Instance.LeaderboardRefreshSeconds,1))
                     return;
                 frame = 0;
                 UpdatePlayerStusUI();

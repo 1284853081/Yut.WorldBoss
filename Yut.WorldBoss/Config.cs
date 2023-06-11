@@ -15,6 +15,7 @@ namespace Yut.WorldBoss
         public ushort UIKey;
         public string BossIcon;
         public string BossName;
+        public ushort PhantomSeconds;
         public ItemPair Ticket;
         public ushort PrepareSeconds;
         public ushort FightingSeconds;
@@ -22,6 +23,7 @@ namespace Yut.WorldBoss
         public uint MinRewardDamage;
         public float LeaderboardRefreshSeconds;
         public byte PrepareNoticeSeconds;
+        public List<string> PhantomType;
         public ZombieRegion Region;
         public List<RewardInterval> Rewards;
         public Vector3 BossRefreshPoint;
@@ -32,6 +34,7 @@ namespace Yut.WorldBoss
             UIKey = 40010;
             BossIcon = "Your boss icon URL";
             BossName = "世界BOSS";
+            PhantomSeconds = 10;
             Ticket = new ItemPair(14, 1);
             PrepareSeconds = 30;
             FightingSeconds = 1800;
@@ -39,6 +42,22 @@ namespace Yut.WorldBoss
             MinRewardDamage = 100;
             LeaderboardRefreshSeconds = 1f;
             PrepareNoticeSeconds = 10;
+            PhantomType = new List<string>()
+            {
+                "ACID",
+                "BOSS_ELECTRIC",
+                "BOSS_WIND",
+                "BOSS_FIRE",
+                "BOSS_ALL",
+                "BOSS_MAGMA",
+                "SPIRIT",
+                "BOSS_SPIRIT",
+                "BOSS_NUCLEAR",
+                "DL_BLUE_VOLATILE",
+                "DL_RED_VOLATILE",
+                "BOSS_ELVER_STOMPER",
+                "BOSS_KUWAIT"
+            };
             List<Minion> minions = new List<Minion>()
             {
                 new Minion("NORMAL", 100),

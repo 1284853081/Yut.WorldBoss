@@ -18,18 +18,20 @@ namespace Yut.WorldBoss
         {
             public ushort id;
             public uint health;
-            public ZombieState( ushort id, uint health)
+            public ZombieState(ushort id, uint health)
             {
                 this.id = id;
                 this.health = health;
             }
         }
         private static ZombieManager instance;
+        private Zombie boss;
+        private float attackFrame = 0;
         public static ZombieManager Instance => instance;
         private byte bound = 0;
         private static readonly List<ZombieState> states = new List<ZombieState>();
         public byte Bound => bound;
-        public void Damage(DamageZombieParameters parameters,int damage)
+        public void Damage(DamageZombieParameters parameters, int damage)
         {
             ZombieState state = states.Find(t => t.id == parameters.zombie.id);
             if (state == null)
@@ -49,7 +51,7 @@ namespace Yut.WorldBoss
                     PlayerManager.Instance.AddDamage(player.CSteamID, x);
                 PlayerManager.Instance.UpdateBossHealthUI(state.health);
             }
-            if(state.health <= 0)
+            if (state.health <= 0)
             {
                 states.Remove(state);
                 SDG.Unturned.ZombieManager.sendZombieDead(parameters.zombie, parameters.zombie.transform.position);
@@ -67,14 +69,14 @@ namespace Yut.WorldBoss
             for (int i = 0; i < SDG.Unturned.ZombieManager.regions[bound].zombies.Count; i++)
             {
                 Zombie zombie = SDG.Unturned.ZombieManager.regions[bound].zombies[i];
-                if(zombie != null && !zombie.isDead)
+                if (zombie != null && !zombie.isDead)
                     SDG.Unturned.ZombieManager.sendZombieDead(zombie, Vector3.zero);
             }
         }
         private void SpawnBoss()
         {
             LevelNavigation.tryGetBounds(Yut.Instance.Configuration.Instance.BossRefreshPoint, out bound);
-            Zombie boss = SDG.Unturned.ZombieManager.regions[bound].zombies[0];
+            boss = SDG.Unturned.ZombieManager.regions[bound].zombies[0];
             byte type = DataModule.Math.RangeToByte(Yut.Instance.BossTable);
             byte suit = RandomSuit(LevelZombies.tables[type]);
             ZombieType.CheckValid(Yut.Instance.Configuration.Instance.Region.BossType, out byte speciality);
@@ -106,7 +108,7 @@ namespace Yut.WorldBoss
             ZombieType.CheckValid(specialityStr, out byte speciality);
             byte suit = RandomSuit(LevelZombies.tables[type]);
             List<ZombieSpawnpoint> spawnpoints = LevelZombies.zombies[bound];
-            Vector3 point = spawnpoints[UnityEngine.Random.Range(0, spawnpoints.Count)].point + new Vector3(0,1,0);
+            Vector3 point = spawnpoints[UnityEngine.Random.Range(0, spawnpoints.Count)].point + new Vector3(0, 1, 0);
             uint health = Yut.Instance.Configuration.Instance.Region.Minions.Find(x => x.type == specialityStr).Health;
             SDG.Unturned.ZombieManager.sendZombieAlive(SDG.Unturned.ZombieManager.regions[bound].zombies[id],
                 type, speciality, suit, suit, suit, suit, point, (byte)UnityEngine.Random.Range(0, 180));
@@ -120,11 +122,11 @@ namespace Yut.WorldBoss
         }
         private void Update()
         {
-            if(!init)
+            if (!init)
             {
-                if(LevelNavigation.tryGetBounds(Yut.Instance.Configuration.Instance.BossRefreshPoint, out bound))
+                if (LevelNavigation.tryGetBounds(Yut.Instance.Configuration.Instance.BossRefreshPoint, out bound))
                 {
-                    if(Yut.Instance.Register(bound))
+                    if (Yut.Instance.Register(bound))
                     {
                         init = true;
                     }
@@ -142,6 +144,19 @@ namespace Yut.WorldBoss
                     }
                 }
             }
+        }
+        private void FixedUpdate()
+        {
+            if (BossManager.Instance.State != EState.Fighting || boss is null)
+                return;
+            attackFrame += Time.fixedDeltaTime;
+            if (attackFrame < DataModule.Math.Range(Yut.Instance.Configuration.Instance.PhantomSeconds, 1f))
+                return;
+            attackFrame = 0;
+            string typeStr = Yut.Instance.Configuration.Instance.PhantomType[UnityEngine.Random.Range(0,
+                Yut.Instance.Configuration.Instance.PhantomType.Count)];
+            if(ZombieType.CheckValid(typeStr, out byte typeb))
+                SDG.Unturned.ZombieManager.sendZombieSpeciality(boss,(EZombieSpeciality)typeb);
         }
     }
 }
