@@ -34,6 +34,10 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="AstarPathfindingProject, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\AstarPathfindingProject.dll</HintPath>
+    </Reference>
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
@@ -60,25 +64,40 @@
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="Yut.DataModule">
       <HintPath>..\..\..\..\Yut.DataModule\Yut.DataModule\bin\Release\Yut.DataModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BossManager.cs" />
+    <Compile Include="BossSkillManager.cs" />
+    <Compile Include="CommandWBE.cs" />
+    <Compile Include="CommandWBS.cs" />
+    <Compile Include="GameStateManager.cs" />
     <Compile Include="CommandWBJ.cs" />
-    <Compile Include="CommandWBP.cs" />
-    <Compile Include="CommandWBT.cs" />
     <Compile Include="CommandWBR.cs" />
     <Compile Include="CommandWBTI.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ItemPair.cs" />
     <Compile Include="Minion.cs" />
+    <Compile Include="ModeConfig.cs" />
     <Compile Include="PlayerManager.cs" />
+    <Compile Include="Refresh.cs" />
     <Compile Include="RewardInterval.cs" />
+    <Compile Include="SkillAttribute.cs" />
+    <Compile Include="SkillPair.cs" />
+    <Compile Include="SkillConfig.cs" />
+    <Compile Include="StateConfig.cs" />
     <Compile Include="Yut.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZombieManager.cs" />

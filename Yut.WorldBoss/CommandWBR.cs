@@ -30,7 +30,7 @@ namespace Yut.WorldBoss
                 UnturnedChat.Say(caller, Yut.Instance.Translate("Error_Syntax"));
                 return;
             }
-            if (BossManager.Instance.State != EState.Rewarding)
+            if (GameStateManager.Instance.State != EState.Rewarding)
             {
                 UnturnedChat.Say(caller, Yut.Instance.Translate("Not_Start_Rreward"));
                 return;

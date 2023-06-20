@@ -9,33 +9,38 @@ using System.Threading.Tasks;
 
 namespace Yut.WorldBoss
 {
-    public class CommandWBT : IRocketCommand
+    internal class CommandWBE : IRocketCommand
     {
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
-        public string Name => "wbt";
+
+        public string Name => "wbe";
+
         public string Help => "";
+
         public string Syntax => "";
+
         public List<string> Aliases => new List<string>();
+
         public List<string> Permissions => new List<string>();
+
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            if (command.Length != 0)
+            if(command.Length != 0)
             {
                 UnturnedChat.Say(caller, Yut.Instance.Translate("Error_Syntax"));
                 return;
             }
-            if (BossManager.Instance.State != EState.Fighting && BossManager.Instance.State != EState.Preparing)
+            if (GameStateManager.Instance.State == EState.Fighting)
             {
+                UnturnedPlayer player = caller as UnturnedPlayer;
+                bool flag = PlayerManager.Instance.Remove(player);
+                if (flag)
+                    UnturnedChat.Say(caller, Yut.Instance.Translate("Remove_Success"));
+                else
+                    UnturnedChat.Say(caller, Yut.Instance.Translate("Remove_Failed"));
+            }
+            else
                 UnturnedChat.Say(caller, Yut.Instance.Translate("Not_Start_Fighting"));
-                return;
-            }
-            UnturnedPlayer player = caller as UnturnedPlayer;
-            if (!PlayerManager.Instance.HasSign(player))
-            {
-                UnturnedChat.Say(caller, Yut.Instance.Translate("Not_Sign"));
-                return;
-            }
-            player.Teleport(Yut.Instance.Configuration.Instance.BossRefreshPoint + new UnityEngine.Vector3(30, 0, 0), 0);
         }
     }
 }
