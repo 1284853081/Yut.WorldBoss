@@ -1,13 +1,9 @@
 ﻿using Rocket.API;
-using Rocket.Unturned.Chat;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SDG.Unturned;
 using Rocket.API.Extensions;
+using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
+using SDG.Unturned;
+using System.Collections.Generic;
 
 namespace Yut.WorldBoss
 {
@@ -15,7 +11,7 @@ namespace Yut.WorldBoss
     {
         public AllowedCaller AllowedCaller => AllowedCaller.Both;
         public string Name => "wbs";
-        public string Help => "";
+        public string Help => "wbs <mode> <tag> <value> [<value>]|wbs <point|p>";
         public string Syntax => "wbs <mode> <tag> <value> [<value>]|wbs <point|p>";
         public List<string> Aliases => new List<string>();
         public List<string> Permissions => new List<string>();
@@ -25,7 +21,7 @@ namespace Yut.WorldBoss
             if (command.Length > 0)
             {
                 string tag = command[0].ToLower();
-                if(command.Length == 1 && (tag == "point" || tag == "p"))
+                if (command.Length == 1 && (tag == "point" || tag == "p"))
                 {
                     UnturnedPlayer player = caller as UnturnedPlayer;
                     if (LevelNavigation.tryGetBounds(player.Position, out byte bound))
@@ -40,7 +36,7 @@ namespace Yut.WorldBoss
                     return;
                 }
                 config = Yut.Instance.Configuration.Instance.ModeConfigs.Find(x => x.Mode.ToLower() == command[0].ToLower());
-                if(config == null)
+                if (config == null)
                 {
                     UnturnedChat.Say(caller, Yut.Instance.Translate("Mode_Not_Found"));
                     return;
@@ -54,7 +50,7 @@ namespace Yut.WorldBoss
             if (command.Length == 3)
             {
                 string tag = command[1].ToLower();
-                switch(tag)
+                switch (tag)
                 {
                     case "bosshealth":
                     case "bh":
@@ -451,7 +447,7 @@ namespace Yut.WorldBoss
                 //else
                 //    UnturnedChat.Say(caller, Yut.Instance.Translate("Error_Syntax"));
             }
-            else if(command.Length == 4)
+            else if (command.Length == 4)
             {
                 string tag = command[1].ToLower();
                 switch (tag)

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Yut.WorldBoss
 {
@@ -14,7 +11,7 @@ namespace Yut.WorldBoss
         public byte Minute;
         public string Mode;
         public Refresh() { }
-        public Refresh(byte hour, byte minute,string mode)
+        public Refresh(byte hour, byte minute, string mode)
         {
             Hour = hour;
             Minute = minute;
@@ -42,7 +39,7 @@ namespace Yut.WorldBoss
             return hashCode;
         }
         public static implicit operator TimeSpan(Refresh time)
-            => new TimeSpan(time.Hour,time.Minute,0);
+            => new TimeSpan(time.Hour, time.Minute, 0);
         public static bool operator <(Refresh l, Refresh r)
             => l.Hour * 60 + l.Minute < r.Hour * 60 + r.Minute;
         public static bool operator >(Refresh l, Refresh r)

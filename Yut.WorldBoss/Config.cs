@@ -1,14 +1,10 @@
 ﻿using Rocket.API;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Yut.WorldBoss
 {
-    public class Config :  IRocketPluginConfiguration
+    public class Config : IRocketPluginConfiguration
     {
         public ushort HKey;
         public ushort NKey;
@@ -20,8 +16,8 @@ namespace Yut.WorldBoss
         public List<ModeConfig> ModeConfigs;
         public void LoadDefaults()
         {
-            HKey = 65500;
-            NKey = 65501;
+            HKey = 34309;
+            NKey = 34310;
             LeaderboardRefreshSeconds = 1;
             PrepareNoticeSeconds = 10;
             BossRefreshPoint = Vector3.zero;

@@ -75,7 +75,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Steam\steamapps\common\Unturned\Unturned_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
-    <Reference Include="Yut.DataModule">
+    <Reference Include="Yut.DataModule, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Yut.DataModule\Yut.DataModule\bin\Release\Yut.DataModule.dll</HintPath>
     </Reference>
   </ItemGroup>

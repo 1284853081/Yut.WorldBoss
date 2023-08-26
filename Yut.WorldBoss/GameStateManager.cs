@@ -1,10 +1,6 @@
 ﻿using Rocket.Unturned.Chat;
 using SDG.Unturned;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Yut.WorldBoss
@@ -89,10 +85,11 @@ namespace Yut.WorldBoss
             PlayerManager.Instance.SendMessageToPlayers(Yut.Instance.Translate("Challenge_Ends"));
             PlayerManager.Instance.Clear();
             ZombieManager.Instance.Clear();
+            InitNextRefreshTime();
         }
         private void Update()
         {
-            if(!isStart)
+            if (!isStart)
             {
                 TimeSpan span = DateTime.Now.TimeOfDay;
                 if (span.Hours != refreshTime.Hour || span.Minutes != refreshTime.Minute)
@@ -109,7 +106,6 @@ namespace Yut.WorldBoss
                 PlayerManager.Instance.Clear();
                 ZombieManager.Instance.KillAll();
                 isStart = true;
-                InitNextRefreshTime();
                 UnturnedChat.Say(Yut.Instance.Translate("Boss_Start", stateSeconds));
                 OnStateChanged?.Invoke(state);
             }
@@ -118,16 +114,16 @@ namespace Yut.WorldBoss
                 frame += Time.deltaTime;
                 if (frame < stateSeconds)
                 {
-                    if(state == EState.Preparing)
+                    if (state == EState.Preparing)
                     {
                         int a = DataModule.Math.RangeToInt32(frame);
-                        if ((a % DataModule.Math.RangeToByte(Yut.Instance.Configuration.Instance.PrepareNoticeSeconds,1) == 0 || stateSeconds - a <= 3) && a != lastFrame)
+                        if ((a % DataModule.Math.RangeToByte(Yut.Instance.Configuration.Instance.PrepareNoticeSeconds, 1) == 0 || stateSeconds - a <= 3) && a != lastFrame)
                         {
                             UnturnedChat.Say(Yut.Instance.Translate("Boss_Start", stateSeconds - a));
                             lastFrame = a;
                         }
                     }
-                    else if(state == EState.Fighting)
+                    else if (state == EState.Fighting)
                     {
                         int a = Mathf.FloorToInt(stateSeconds - frame);
                         if (a != lastSeconds)
@@ -139,13 +135,14 @@ namespace Yut.WorldBoss
                     return;
                 }
                 frame = 0;
-                switch(state)
+                switch (state)
                 {
                     case EState.Preparing:
                         state = EState.Fighting;
+                        lastFrame = 0;
                         stateSeconds = modeConfig.StateConfig.FightingSeconds;
-                        ZombieManager.Instance.Run();
                         PlayerManager.Instance.OpenUI();
+                        ZombieManager.Instance.Run();
                         PlayerManager.Instance.TeleportPlayers();
                         UnturnedChat.Say(Yut.Instance.Translate("Boss_Fighting"));
                         OnStateChanged?.Invoke(state);

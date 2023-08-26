@@ -1,14 +1,10 @@
-﻿using Rocket.Unturned.Chat;
-using Rocket.Unturned.Player;
-using SDG.NetTransport;
+﻿using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Yut.WorldBoss
@@ -62,16 +58,16 @@ namespace Yut.WorldBoss
             SDG.Unturned.ZombieManager.sendZombieStomp(boss);
             List<UnturnedPlayer> players = PlayerManager.Instance.PlayersInRange(boss.transform.position, skill.SkillRange).ToList();
             float num = 360f / players.Count;
-            for(int i = 0; i < players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
                 if (IsBaptismTarget(players[i]))
                     continue;
                 Quaternion quaternion = Quaternion.AngleAxis(num * i, Vector3.up);
-                players[i].Teleport(boss.transform.position + quaternion * Vector3.forward, UnityEngine.Random.Range(0, 360));
+                players[i].Teleport(boss.transform.position + quaternion * Vector3.forward + Vector3.up * 4, UnityEngine.Random.Range(0, 360));
             }
         }
         [Skill]
-        private void Shield ()
+        private void Shield()
         {
             if (isInvincible)
                 return;
@@ -95,11 +91,11 @@ namespace Yut.WorldBoss
             SkillPair skill = GameStateManager.Instance.GetSkill("explosion2");
             Vector3 point = boss.transform.position;
             EffectAsset effectAsset = Assets.find(EAssetType.EFFECT, 119) as EffectAsset;
-            for(int i = 1; i<= 3;i++)
+            for (int i = 1; i <= 3; i++)
             {
                 int num = 6 + i * 2;
                 float angle = 360f / num;
-                for(int j = 0; j < num; j++)
+                for (int j = 0; j < num; j++)
                 {
                     Quaternion quaternion = Quaternion.AngleAxis(angle * j, Vector3.up);
                     Vector3 position = point + quaternion * Vector3.forward * skill.SkillRange * i;
@@ -136,11 +132,11 @@ namespace Yut.WorldBoss
         {
             SkillPair skill = GameStateManager.Instance.GetSkill("breath");
             float a = 2f;
-            foreach(var player in PlayerManager.Instance.PlayersInRange(boss.transform.position, skill.SkillRange))
+            foreach (var player in PlayerManager.Instance.PlayersInRange(boss.transform.position, skill.SkillRange))
             {
                 if (IsBaptismTarget(player))
                     continue;
-                player.Teleport(boss.transform.position + boss.transform.forward * a, UnityEngine.Random.Range(0, 360));
+                player.Teleport(boss.transform.position + boss.transform.forward * a + Vector3.up, UnityEngine.Random.Range(0, 360));
                 a += 0.5f;
             }
             SDG.Unturned.ZombieManager.sendZombieSpeciality(boss, EZombieSpeciality.BOSS_FIRE);
@@ -193,7 +189,7 @@ namespace Yut.WorldBoss
             Vector3 point = boss.transform.position;
             byte num = DataModule.Math.RangeToByte(skill.SkillRange * Mathf.PI / 5);
             float angle = 360f / num;
-            for(int i = 0; i < num; i++)
+            for (int i = 0; i < num; i++)
             {
                 Quaternion quaternion = Quaternion.AngleAxis(angle * i, Vector3.up);
                 Vector3 vector = point + quaternion * Vector3.forward * skill.SkillRange + Vector3.up * 15f;
@@ -205,11 +201,11 @@ namespace Yut.WorldBoss
         {
             SkillPair skill = GameStateManager.Instance.GetSkill("acid2");
             Vector3 point = boss.transform.position;
-            for(int i = 0; i < 6;i++)
+            for (int i = 0; i < 6; i++)
             {
                 Quaternion quaternion = Quaternion.AngleAxis(60 * i, Vector3.up);
                 int num = (int)skill.SkillRange / 10;
-                for(int j = 1; j <= num; j++)
+                for (int j = 1; j <= num; j++)
                 {
                     Vector3 vector = point + quaternion * Vector3.forward * 10 * j + Vector3.up * 15f;
                     SDG.Unturned.ZombieManager.sendZombieAcid(boss, vector, Vector3.down);
@@ -221,7 +217,7 @@ namespace Yut.WorldBoss
         {
             SkillPair skill = GameStateManager.Instance.GetSkill("acid2");
             Vector3 point = boss.transform.position;
-            EffectAsset effectAsset = Assets.find(EAssetType.EFFECT,166) as EffectAsset;
+            EffectAsset effectAsset = Assets.find(EAssetType.EFFECT, 166) as EffectAsset;
             if (effectAsset != null)
             {
                 TriggerEffectParameters parameters = new TriggerEffectParameters(effectAsset);
@@ -229,7 +225,7 @@ namespace Yut.WorldBoss
                 parameters.position = point + Vector3.up * 10f;
                 EffectManager.triggerEffect(parameters);
             }
-            for(int i = 0; i<3;i++)
+            for (int i = 0; i < 3; i++)
             {
                 Quaternion quaternion = Quaternion.AngleAxis(120 * i, Vector3.up);
                 TriggerEffectParameters parameters = new TriggerEffectParameters(effectAsset);
@@ -256,11 +252,11 @@ namespace Yut.WorldBoss
         {
             SkillPair skill = GameStateManager.Instance.GetSkill("boulder");
             Vector3 point = boss.transform.position;
-            for(int i = 0; i< 3;i++)
+            for (int i = 0; i < 3; i++)
             {
                 int num = 10 + 4 * i;
                 float angle = 360 / num;
-                for(int j = 0; j < num; j++)
+                for (int j = 0; j < num; j++)
                 {
                     Quaternion quaternion = Quaternion.AngleAxis(angle * j, Vector3.up);
                     SDG.Unturned.ZombieManager.sendZombieBoulder(boss, point + quaternion * Vector3.forward * skill.SkillRange * (i + 1) + Vector3.up * 20f, Vector3.down);
@@ -277,7 +273,7 @@ namespace Yut.WorldBoss
                 Vector3 direction = quaternion * Vector3.forward;
                 SDG.Unturned.ZombieManager.sendZombieBoulder(boss, point + direction * 3f + Vector3.up * 3f, direction);
             }
-        }   
+        }
         [Skill]
         private void Baptism()
         {
@@ -332,7 +328,7 @@ namespace Yut.WorldBoss
                 return false;
             if (baptismPlayer.CSteamID == player.CSteamID)
                 return true;
-            for(int i = 0; i < baptismPlayer2.Count; i++)
+            for (int i = 0; i < baptismPlayer2.Count; i++)
             {
                 if (baptismPlayer2[i] == null || baptismPlayer2[i].Player == null)
                     continue;
@@ -348,23 +344,23 @@ namespace Yut.WorldBoss
         }
         private void Update()
         {
-            if(boss == null)
+            if (boss == null)
                 return;
-            if(Time.time - lastSkill > GameStateManager.Instance.ModeConfig.StateConfig.SkillRefreshSeconds)
+            if (Time.time - lastSkill > GameStateManager.Instance.ModeConfig.StateConfig.SkillRefreshSeconds)
             {
                 MethodInfo skill = skills[UnityEngine.Random.Range(0, skills.Count)];
                 skill.Invoke(this, null);
                 if (skill.Name == "Shield")
                 {
-                    PlayerManager.Instance.SendMessageToPlayers(Yut.Instance.Translate("Shield_Open"),Yut.Instance.Configuration.Instance.SkillNoticeColor);
+                    PlayerManager.Instance.SendMessageToPlayers(Yut.Instance.Translate("Shield_Open"), Yut.Instance.Configuration.Instance.SkillNoticeColor);
                     PlayerManager.Instance.UpdateShieldState(true);
                 }
                 PlayerManager.Instance.OpenSkillUI(Yut.Instance.Translate("Boss_Skill", GameStateManager.Instance.GetSkill(skill.Name).SkillName));
                 lastSkill = Time.time;
             }
-            if(Time.time - lastFire > 1)
+            if (Time.time - lastFire > 1)
             {
-                foreach(var player in PlayerManager.Instance.PlayersInRange(boss.transform.position, fireSkill.SkillRange))
+                foreach (var player in PlayerManager.Instance.PlayersInRange(boss.transform.position, fireSkill.SkillRange))
                 {
                     if (player != null)
                         player.Player.life.askDamage(GameStateManager.Instance.ModeConfig.SkillConfig.FireDamage, player.Position, EDeathCause.ZOMBIE,
@@ -378,9 +374,9 @@ namespace Yut.WorldBoss
                 PlayerManager.Instance.UpdateShieldState(false);
                 PlayerManager.Instance.SendMessageToPlayers(Yut.Instance.Translate("Shield_Close"), Yut.Instance.Configuration.Instance.SkillNoticeColor);
             }
-            if(virusPlayers.Count > 0)
+            if (virusPlayers.Count > 0)
             {
-                if(Time.time - lastVirus > 1)
+                if (Time.time - lastVirus > 1)
                 {
                     for (int i = 0; i < virusPlayers.Count; i++)
                     {

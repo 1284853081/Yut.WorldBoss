@@ -6,8 +6,6 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Yut.WorldBoss
@@ -20,7 +18,7 @@ namespace Yut.WorldBoss
             public byte Rank;
             public CSteamID SteamID;
             public uint Damage;
-            public DamageStus(byte rank,CSteamID steamID,uint damage)
+            public DamageStus(byte rank, CSteamID steamID, uint damage)
             {
                 Rank = rank;
                 SteamID = steamID;
@@ -30,12 +28,12 @@ namespace Yut.WorldBoss
         private static PlayerManager instance;
         private float frame = Time.time;
         public static PlayerManager Instance => instance;
-        private static readonly Dictionary<CSteamID, uint> damages = new Dictionary<CSteamID,uint>();
+        private static readonly Dictionary<CSteamID, uint> damages = new Dictionary<CSteamID, uint>();
         private static readonly Dictionary<CSteamID, Items> rewards = new Dictionary<CSteamID, Items>();
         public static event ChallengeSuccessHandler OnChallengeSuccess;
         internal bool Sign(UnturnedPlayer player)
         {
-            if(!damages.ContainsKey(player.CSteamID) && damages.Count < GameStateManager.Instance.ModeConfig.StateConfig.MaxPlayers)
+            if (!damages.ContainsKey(player.CSteamID) && damages.Count < GameStateManager.Instance.ModeConfig.StateConfig.MaxPlayers)
             {
                 damages.Add(player.CSteamID, 0);
                 return true;
@@ -44,13 +42,13 @@ namespace Yut.WorldBoss
         }
         internal bool HasSign(UnturnedPlayer player)
         {
-            if(player!=null && player.Player != null)
+            if (player != null && player.Player != null)
                 return damages.ContainsKey(player.CSteamID);
             return false;
         }
         internal bool Remove(UnturnedPlayer player)
             => damages.Remove(player.CSteamID);
-        internal void AddDamage(CSteamID id,uint damage)
+        internal void AddDamage(CSteamID id, uint damage)
         {
             if (damages.ContainsKey(id))
                 damages[id] += damage;
@@ -58,7 +56,7 @@ namespace Yut.WorldBoss
         internal void OpenUI()
         {
             ushort uikey = Yut.Instance.Configuration.Instance.HKey;
-            foreach(var id in damages.Keys)
+            foreach (var id in damages.Keys)
                 OpenUI(uikey, id);
         }
         internal void OpenUI(ushort uikey, CSteamID id)
@@ -77,7 +75,7 @@ namespace Yut.WorldBoss
         }
         internal void CloseUI()
         {
-            foreach(var id in damages.Keys)
+            foreach (var id in damages.Keys)
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
                 if (player == null)
@@ -115,7 +113,7 @@ namespace Yut.WorldBoss
         {
             if (player == null || player.Player == null)
                 return;
-            if(damages.ContainsKey(player.CSteamID))
+            if (damages.ContainsKey(player.CSteamID))
             {
                 ushort uikey = Yut.Instance.Configuration.Instance.HKey;
                 OpenUI(uikey, player.CSteamID);
@@ -129,7 +127,7 @@ namespace Yut.WorldBoss
             if (damages.ContainsKey(player.CSteamID))
                 Teleport(player);
         }
-        internal void UpdateBossHealthUI(uint bossHealth,ref byte lastPercent)
+        internal void UpdateBossHealthUI(uint bossHealth, ref byte lastPercent)
         {
             short key = (short)Yut.Instance.Configuration.Instance.HKey;
             uint max = GameStateManager.Instance.ModeConfig.Region.BossHealth;
@@ -137,17 +135,17 @@ namespace Yut.WorldBoss
             foreach (var csteamid in damages.Keys)
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(csteamid);
-                if(player == null)
+                if (player == null)
                     continue;
                 ITransportConnection con = Provider.findTransportConnection(csteamid);
                 if (con == null)
                     continue;
-                if(num < lastPercent)
+                if (num < lastPercent)
                 {
                     for (int i = num; i < lastPercent; i++)
                         EffectManager.sendUIEffectVisibility(key, con, true, $"b ({i})", false);
                 }
-                else if(lastPercent < num)
+                else if (lastPercent < num)
                 {
                     for (int i = lastPercent; i < num; i++)
                         EffectManager.sendUIEffectVisibility(key, con, true, $"b ({i})", true);
@@ -171,12 +169,12 @@ namespace Yut.WorldBoss
                 EffectManager.sendUIEffectText((short)key, con, true, "提示文本", text);
             }
         }
-        internal void SendMessageToPlayers(string message,Color color)
+        internal void SendMessageToPlayers(string message, Color color)
         {
-            foreach(var id in damages.Keys)
+            foreach (var id in damages.Keys)
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
-                if(player != null && player.Player != null)
+                if (player != null && player.Player != null)
                     UnturnedChat.Say(player, message, color);
             }
         }
@@ -238,11 +236,12 @@ namespace Yut.WorldBoss
             foreach (var s in orders)
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(s.Key);
-                if (player == null || player.Player == null)
-                    continue;
+                //if (player == null || player.Player == null)
+                //    continue;
                 if (s.Value < GameStateManager.Instance.ModeConfig.StateConfig.MinRewardDamage)
                 {
-                    UnturnedChat.Say(player, Yut.Instance.Translate("Low_Damage", GameStateManager.Instance.ModeConfig.StateConfig.MinRewardDamage));
+                    if (player != null && player.Player != null)
+                        UnturnedChat.Say(player, Yut.Instance.Translate("Low_Damage", GameStateManager.Instance.ModeConfig.StateConfig.MinRewardDamage));
                     continue;
                 }
                 Items items = new Items(PlayerInventory.STORAGE);
@@ -260,8 +259,11 @@ namespace Yut.WorldBoss
                     }
                     rewards.Add(s.Key, items);
                 }
-                UnturnedChat.Say(player, Yut.Instance.Translate("Get_Reward"));
-                OnChallengeSuccess?.Invoke(player);
+                if (player != null && player.Player != null)
+                {
+                    UnturnedChat.Say(player, Yut.Instance.Translate("Get_Reward"));
+                    OnChallengeSuccess?.Invoke(player);
+                }
             }
         }
         internal void Clear()
@@ -277,33 +279,33 @@ namespace Yut.WorldBoss
             player.Inventory.updateItems(PlayerInventory.STORAGE, item);
             player.Inventory.sendStorage();
         }
-        internal IEnumerable<UnturnedPlayer> PlayersInRange(Vector3 vector,float r)
+        internal IEnumerable<UnturnedPlayer> PlayersInRange(Vector3 vector, float r)
         {
-            foreach(var id in damages.Keys)
+            foreach (var id in damages.Keys)
             {
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(id);
                 if (player is null || player.Player is null)
                     continue;
                 float r1 = Vector3.Distance(vector, player.Position);
-                if(r1 < r)
+                if (r1 < r)
                     yield return player;
             }
         }
-        internal UnturnedPlayer RandomPlayerInRange(Vector3 vector,float r)
+        internal UnturnedPlayer RandomPlayerInRange(Vector3 vector, float r)
         {
-            List<UnturnedPlayer> players = PlayersInRange(vector,r).ToList();
+            List<UnturnedPlayer> players = PlayersInRange(vector, r).ToList();
             if (players.Count == 0)
                 return null;
             return players[UnityEngine.Random.Range(0, players.Count)];
         }
-        internal UnturnedPlayer MinDistPlayerInRange(Vector3 vector,float r)
+        internal UnturnedPlayer MinDistPlayerInRange(Vector3 vector, float r)
         {
             UnturnedPlayer result = null;
             float min = float.MaxValue;
-            foreach(var player in PlayersInRange(vector,r))
+            foreach (var player in PlayersInRange(vector, r))
             {
                 float dist = Vector3.Distance(vector, player.Position);
-                if(dist < min)
+                if (dist < min)
                 {
                     min = dist;
                     result = player;
@@ -311,13 +313,13 @@ namespace Yut.WorldBoss
             }
             return result;
         }
-        internal List<UnturnedPlayer> RandomPlayersInRange(Vector3 vector,float r,byte num)
+        internal List<UnturnedPlayer> RandomPlayersInRange(Vector3 vector, float r, byte num)
         {
             List<UnturnedPlayer> players = PlayersInRange(vector, r).ToList();
             List<UnturnedPlayer> result = new List<UnturnedPlayer>();
             if (players.Count == 0)
                 return result;
-            for(int i = 0; i < num; i++)
+            for (int i = 0; i < num; i++)
             {
                 int ind = UnityEngine.Random.Range(0, players.Count);
                 result.Add(players[ind]);
@@ -351,9 +353,9 @@ namespace Yut.WorldBoss
             byte start = 0;
             byte end = DataModule.Math.RangeToByte(list.Count);
             if (ind == 0)
-                end = DataModule.Math.RangeToByte(ind + 5, (byte)list.Count);
+                end = DataModule.Math.RangeToByte(ind + 5, 0, (byte)list.Count);
             else if (ind == 1)
-                end = DataModule.Math.RangeToByte(ind + 4, (byte)list.Count);
+                end = DataModule.Math.RangeToByte(ind + 4, 0, (byte)list.Count);
             else if (ind == list.Count - 1 || ind == list.Count - 2)
                 start = DataModule.Math.RangeToByte(list.Count - 5);
             else
@@ -371,9 +373,9 @@ namespace Yut.WorldBoss
         }
         private void Update()
         {
-            if(GameStateManager.Instance.State == EState.Fighting)
+            if (GameStateManager.Instance.State == EState.Fighting)
             {
-                if (Time.time - frame < DataModule.Math.Range(Yut.Instance.Configuration.Instance.LeaderboardRefreshSeconds,1))
+                if (Time.time - frame < DataModule.Math.Range(Yut.Instance.Configuration.Instance.LeaderboardRefreshSeconds, 1))
                     return;
                 frame = Time.time;
                 UpdatePlayerStusUI();

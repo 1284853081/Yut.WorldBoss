@@ -6,10 +6,7 @@ using Rocket.Unturned.Events;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Logger = Rocket.Core.Logging.Logger;
 
@@ -31,7 +28,7 @@ namespace Yut.WorldBoss
                 list.Add("Join_Success", "成功报名世界BOSS");
                 list.Add("Boss_Start", "世界BOSS已经开启,输入/wbj即可报名参加,报名时间还剩{0}秒");
                 list.Add("Boss_Fighting", "世界BOSS进入战斗阶段");
-                list.Add("Repeat_Join", "请勿重复报名");
+                list.Add("Repeat_Join", "请勿重复报名或报名人数已满");
                 list.Add("Low_Damage", "由于你造成的伤害少于{0}你无法获得奖励");
                 list.Add("Get_Reward", "恭喜挑战成功.你现在可以使用/wbr来领取奖励");
                 list.Add("Not_Start_Rreward", "当前不可领取奖励");
@@ -106,12 +103,12 @@ namespace Yut.WorldBoss
                 return Refresh.Zero;
             else if (Configuration.Instance.Refreshs.Count == 1)
                 return Configuration.Instance.Refreshs[0];
-            for (int i = 0;i< Configuration.Instance.Refreshs.Count-1;i++)
+            for (int i = 0; i < Configuration.Instance.Refreshs.Count - 1; i++)
             {
                 Refresh a = Configuration.Instance.Refreshs[i];
-                if(span < a)
+                if (span < a)
                     return a;
-                Refresh b = Configuration.Instance.Refreshs[i+1];
+                Refresh b = Configuration.Instance.Refreshs[i + 1];
                 if (span < b)
                     return b;
             }
@@ -132,7 +129,7 @@ namespace Yut.WorldBoss
             }
             return false;
         }
-        internal bool CheckMinion(string mode,string type)
+        internal bool CheckMinion(string mode, string type)
         {
             ModeConfig modeConfig = Configuration.Instance.ModeConfigs.Find(x => x.Mode.ToLower() == mode.ToLower());
             if (modeConfig == null)
@@ -165,8 +162,11 @@ namespace Yut.WorldBoss
                 else
                     times *= Provider.modeConfigData.Zombies.NonHeadshot_Armor_Multiplier;
             }
-            UnturnedPlayer player = UnturnedPlayer.FromPlayer(parameters.instigator as Player);
-            if(player != null && player.Player != null)
+            Player p = parameters.instigator as Player;
+            if (p == null)
+                return;
+            UnturnedPlayer player = UnturnedPlayer.FromPlayer(p);
+            if (player != null && player.Player != null)
             {
                 if (!PlayerManager.Instance.HasSign(player))
                 {
@@ -174,7 +174,7 @@ namespace Yut.WorldBoss
                     UnturnedChat.Say(player, Translate("Not_Disturb"), Color.red);
                     return;
                 }
-                if(parameters.limb == ELimb.SKULL || parameters.limb == ELimb.SPINE)
+                if (parameters.limb == ELimb.SKULL || parameters.limb == ELimb.SPINE)
                 {
                     if (player.Player.equipment.asset is ItemGunAsset gunAsset)
                         parameters.damage /= parameters.limb == ELimb.SKULL ? gunAsset.zombieDamageMultiplier.skull : gunAsset.zombieDamageMultiplier.spine;
@@ -189,15 +189,15 @@ namespace Yut.WorldBoss
         }
         private void OnZombieLifeUpdated(Zombie zombie)
         {
-            if (GameStateManager.Instance.IsStart)
+            if (GameStateManager.Instance.State == EState.Fighting)
             {
                 if (zombie.isDead)
                 {
-                    if(zombie.id == 0)
+                    if (zombie.id == 0)
                     {
                         GameStateManager.Instance.EndFight();
                         return;
-                    }    
+                    }
                     else if (zombie.id < GameStateManager.Instance.ModeConfig.Region.MaxMinions && GameStateManager.Instance.State < EState.Rewarding)
                         ZombieManager.Instance.SpawnMinion(zombie.id);
                 }

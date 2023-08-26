@@ -1,19 +1,14 @@
-﻿using Rocket.Unturned.Chat;
+﻿using Rocket.Unturned.Player;
 using SDG.Unturned;
+using Steamworks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using Yut.DataModule;
-using Rocket.Unturned.Player;
 using System.Reflection;
-using Steamworks;
+using UnityEngine;
 
 namespace Yut.WorldBoss
 {
-    public delegate void DamageZombieHandler(Zombie zombie, uint damaage,bool isWorldBoss);
+    public delegate void DamageZombieHandler(Zombie zombie, uint damaage, bool isWorldBoss);
     public class ZombieManager : MonoBehaviour
     {
         private bool init = false;
@@ -36,7 +31,7 @@ namespace Yut.WorldBoss
         internal byte Bound => bound;
         public static ZombieManager Instance => instance;
         public static event DamageZombieHandler OnDamageZombie;
-        internal void Damage(DamageZombieParameters parameters, uint damage,UnturnedPlayer player)
+        internal void Damage(DamageZombieParameters parameters, uint damage, UnturnedPlayer player)
         {
             ZombieState state = states.Find(t => t.id == parameters.zombie.id);
             if (state == null)
@@ -104,7 +99,7 @@ namespace Yut.WorldBoss
                 return null;
             return SDG.Unturned.ZombieManager.regions[bound].zombies[index];
         }
-        internal void TeleportBoss(EZombieSpeciality speciality,Vector3 point)
+        internal void TeleportBoss(EZombieSpeciality speciality, Vector3 point)
         {
             if (boss == null)
                 return;
@@ -138,7 +133,7 @@ namespace Yut.WorldBoss
         private void SpawnMinions()
         {
             var region = GameStateManager.Instance.ModeConfig.Region;
-            byte minions = (byte)Mathf.Min(SDG.Unturned.ZombieManager.regions[bound].zombies.Count, region.MaxMinions);
+            byte minions = (byte)Mathf.Min(SDG.Unturned.ZombieManager.regions[bound].zombies.Count - 1, region.MaxMinions);
             for (byte i = 1; i <= minions; i++)
                 SpawnMinion(i);
         }
@@ -186,11 +181,11 @@ namespace Yut.WorldBoss
                             SDG.Unturned.ZombieManager.sendZombieDead(zombie, Vector3.zero);
                     }
                 }
-                if(boss != null && Time.time - lastAlert > 1)
+                if (boss != null && Time.time - lastAlert > 1)
                 {
                     Type type = boss.GetType();
                     FieldInfo info = type.GetField("player", BindingFlags.Instance | BindingFlags.NonPublic);
-                    if(info.GetValue(boss) == null)
+                    if (info.GetValue(boss) == null)
                     {
                         UnturnedPlayer player = PlayerManager.Instance.MinDistPlayerInRange(boss.transform.position, 200);
                         if (player != null && player.Player != null)

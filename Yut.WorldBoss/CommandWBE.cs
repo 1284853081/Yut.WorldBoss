@@ -1,11 +1,7 @@
 ﻿using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Yut.WorldBoss
 {
@@ -25,7 +21,7 @@ namespace Yut.WorldBoss
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            if(command.Length != 0)
+            if (command.Length != 0)
             {
                 UnturnedChat.Say(caller, Yut.Instance.Translate("Error_Syntax"));
                 return;
