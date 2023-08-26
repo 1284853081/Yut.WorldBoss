@@ -82,5 +82,5 @@ noheadshort|BOSS和小怪的头部伤害和身子伤害一致
 * SPIRIT
 * SPRINTER
 ## 联系方式
-QQ: 1284853081 邮箱: 1284853081@qq.com
+邮箱: yh1284853081@163.com
 > 联系时请备注好说明
