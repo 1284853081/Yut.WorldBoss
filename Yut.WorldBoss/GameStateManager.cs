@@ -25,6 +25,7 @@ namespace Yut.WorldBoss
         private int lastFrame = 0;
         private ushort stateSeconds = 0;
         private bool success = true;
+        private bool isCloseUI = false;
         private int bossTable;
         private int minionTable;
         private int lastSeconds = 0;
@@ -80,6 +81,7 @@ namespace Yut.WorldBoss
         {
             state = EState.WaitingStart;
             isStart = false;
+            isCloseUI = false;
             success = true;
             PlayerManager.Instance.CloseUI();
             PlayerManager.Instance.SendMessageToPlayers(Yut.Instance.Translate("Challenge_Ends"));
@@ -130,6 +132,14 @@ namespace Yut.WorldBoss
                         {
                             PlayerManager.Instance.UpdateTime(a);
                             lastSeconds = a;
+                        }
+                    }
+                    else if (state == EState.Rewarding) 
+                    {
+                        if(frame >= 60 && !isCloseUI)
+                        {
+                            PlayerManager.Instance.CloseUI();
+                            isCloseUI = true;
                         }
                     }
                     return;

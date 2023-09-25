@@ -255,7 +255,13 @@ namespace Yut.WorldBoss
                         ItemPair item = interval.Rewards[i];
                         byte a = (byte)UnityEngine.Random.Range(0, 100);
                         if (a < interval.Rewards[i].Chance)
-                            items.tryAddItem(new Item(item.Id, (byte)UnityEngine.Random.Range(1, item.Count + 1), 100));
+                        {
+                            var count = UnityEngine.Random.Range(1, item.Count + 1);
+                            for(var j = 0;j < count;j++)
+                            {
+                                items.tryAddItem(new Item(item.Id,EItemOrigin.ADMIN, 100));
+                            }
+                        }
                     }
                     rewards.Add(s.Key, items);
                 }
